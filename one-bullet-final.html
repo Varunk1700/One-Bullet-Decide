@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Bullet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #1a2233;
+  --white: #f0f6ff;
+  --accent: #4a9eff;
+  --accent-dark: #1a6bdd;
+  --accent-light: #cce4ff;
+  --blue: #378add;
+  --yellow: #fbbf24;
+  --gray: #6b7fa3;
+  --light-gray: #e4eefa;
+  --card-bg: #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 48px;
+  background: rgba(240,246,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #c8daf5;
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; color: var(--black);
+  letter-spacing: 0.1em;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--gray); text-decoration: none; letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--black); }
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #dbeafe 0%, #eff6ff 50%, #e0f2fe 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 100px 48px 60px;
+  border-bottom: 3px solid var(--accent);
+}
+
+.hero-circles {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.hero-circles span {
+  position: absolute; border-radius: 50%;
+  background: rgba(74,158,255,0.08);
+  animation: float 8s ease-in-out infinite;
+}
+.hero-circles span:nth-child(1) { width:340px;height:340px;top:-80px;right:-60px;animation-delay:0s; }
+.hero-circles span:nth-child(2) { width:200px;height:200px;bottom:80px;left:10%;animation-delay:2s; }
+.hero-circles span:nth-child(3) { width:120px;height:120px;top:40%;right:20%;animation-delay:4s; }
+
+.hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em;
+  color: var(--accent-dark); text-transform: uppercase;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 15vw, 180px);
+  line-height: 0.88;
+  color: var(--black);
+  letter-spacing: -0.01em;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero-title .accent-word { color: var(--accent); display: block; }
+.hero-title .outline-word {
+  -webkit-text-stroke: 2px var(--accent);
+  color: transparent; display: block;
+}
+
+.hero-sub-row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-top: 40px;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+
+.hero-desc {
+  font-size: 14px; line-height: 1.8;
+  color: #4a6fa5; max-width: 320px;
+  font-family: 'DM Mono', monospace;
+}
+.hero-desc strong { color: var(--black); font-weight: 500; }
+
+.hero-pill {
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; letter-spacing: 0.12em;
+  padding: 12px 28px; border-radius: 4px;
+  cursor: pointer; border: none;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none; display: inline-block;
+  box-shadow: 0 4px 20px rgba(74,158,255,0.3);
+}
+.hero-pill:hover { background: var(--accent-dark); transform: scale(1.03); }
+
+/* floating chips */
+.chip {
+  position: absolute;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--black);
+  box-shadow: 0 4px 20px rgba(74,158,255,0.15);
+  border: 1px solid #c8daf5;
+  user-select: none;
+}
+.chip-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 500; margin-right: 6px;
+}
+.chip-blue { background: #4a9eff; color: #fff; }
+.chip-teal { background: #0ea5e9; color: #fff; }
+.chip-green { background: #22c55e; color: #fff; }
+
+.chip-a { top: 100px; right: 60px; }
+.chip-b { top: 220px; right: 110px; }
+.chip-c { bottom: 180px; right: 60px; }
+.chip-d { bottom: 90px; left: 48px; font-size:12px; padding:12px 18px; color:#4a6fa5; }
+
+/* ── TICKER ── */
+.ticker {
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: 0.1em;
+  padding: 10px 0;
+  overflow: hidden; white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-block;
+  animation: ticker 18s linear infinite;
+}
+@keyframes ticker { from{transform:translateX(0)}to{transform:translateX(-50%)} }
+
+/* ── ABOUT STRIP ── */
+.about-strip {
+  background: #fff;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  border-top: 1px solid var(--accent-light);
+  border-bottom: 1px solid var(--accent-light);
+}
+.stat-block { padding: 16px 0; border-top: 1px solid #d0e8ff; }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px; color: var(--accent); line-height: 1;
+}
+.stat-label { font-size: 12px; color: var(--gray); margin-top: 4px; font-family: 'DM Mono', monospace; }
+
+/* ── SECTION SHARED ── */
+.section { padding: 80px 48px; }
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.section-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 8vw, 80px);
+  line-height: 0.92; letter-spacing: 0.01em;
+  color: var(--black);
+  margin-bottom: 32px;
+}
+
+/* ── GAME SECTION ── */
+.game-section { background: var(--light-gray); }
+.game-and-code {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 900px) { .game-and-code { grid-template-columns: 1fr; } }
+
+/* ── GAME (original) ── */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+.game-wrap {
+  font-family: 'Press Start 2P', monospace;
+  background: #87ceeb;
+  min-height: 460px; padding: 14px;
+  position: relative; overflow: hidden;
+}
+.g-clouds { position:absolute;top:0;left:0;right:0;height:70px;pointer-events:none; }
+.g-ground { position:absolute;bottom:0;left:0;right:0;height:40px;background:#5ab032;border-top:5px solid #7dd94a; }
+.g-hud {
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(10,40,90,.65);border:2px solid #80c4ff;border-radius:6px;
+  padding:6px 10px;margin-bottom:10px;position:relative;z-index:10;
+}
+.g-hud-label { font-size:6px;color:#80d4ff;letter-spacing:1px; }
+.g-hud-val { font-size:11px;color:#fff;margin-top:2px; }
+.g-stage {
+  background:rgba(255,255,255,.25);border:3px solid #fff;border-radius:8px;
+  padding:14px 10px;min-height:180px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;position:relative;z-index:10;margin-bottom:10px;
+  backdrop-filter:blur(2px);
+}
+.g-esp { font-size:54px;margin-bottom:6px;animation:gbounce .6s ease-in-out infinite alternate;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2)); }
+@keyframes gbounce{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@keyframes gshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes gfade{from{opacity:0;transform:scale(.75)}to{opacity:1;transform:scale(1)}}
+.g-ename{font-size:8px;color:#003080;text-shadow:1px 1px 0 rgba(255,255,255,.6);margin-bottom:3px;animation:gfade .3s ease}
+.g-edesc{font-size:6px;color:#1a3a6a;text-align:center;max-width:240px;line-height:1.8;animation:gfade .4s ease}
+.g-res{font-size:9px;text-align:center;padding:8px 12px;border-radius:6px;border:2px solid;animation:gfade .25s ease;margin-top:10px}
+.g-res.win{background:rgba(74,200,120,.3);border-color:#22c55e;color:#064e25}
+.g-res.lose{background:rgba(220,50,50,.25);border-color:#dc3232;color:#5a0000}
+.g-res.skip{background:rgba(74,158,255,.25);border-color:#4a9eff;color:#003080}
+.g-actions{display:flex;gap:8px;justify-content:center;position:relative;z-index:10;margin-bottom:8px}
+.gbtn{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 14px;border:3px solid;border-radius:4px;cursor:pointer;transition:transform .1s,opacity .15s}
+.gbtn:hover{transform:scale(1.06)}.gbtn:active{transform:scale(.96)}
+.gbtn-shoot{background:#1a6bdd;border-color:#fff;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.gbtn-shoot:disabled{background:#8ab0d4;border-color:#c0d8f0;color:#e0eeff;cursor:not-allowed;transform:none;opacity:.6}
+.gbtn-skip{background:#0ea5e9;border-color:#fff;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.gbtn-skip:disabled{background:#8ab0d4;border-color:#c0d8f0;color:#e0eeff;cursor:not-allowed;transform:none;opacity:.6}
+.gbtn-next{background:#fbbf24;border-color:#fff;color:#2a1500}
+.gbtn-start{background:#22c55e;border-color:#fff;color:#003010;font-size:9px;padding:11px 22px}
+.g-pips{display:flex;gap:5px;justify-content:center;position:relative;z-index:10;margin-bottom:7px}
+.g-pip{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.2);transition:background .3s}
+.g-pip.g{background:#22c55e;border-color:#22c55e}
+.g-pip.b{background:#ef4444;border-color:#ef4444}
+.g-pip.c{background:#fbbf24;border-color:#fbbf24;box-shadow:0 0 5px #fbbf24}
+.g-ovl{position:absolute;inset:0;background:rgba(10,40,90,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;gap:12px}
+.g-ovl-title{font-size:18px;color:#80d4ff;text-shadow:2px 2px 0 #000;text-align:center}
+.g-ovl-score{font-size:13px;color:#fff;background:rgba(74,158,255,.2);border:2px solid #4a9eff;padding:8px 16px;border-radius:6px}
+.g-ovl-sub{font-size:7px;color:#cce4ff;text-align:center;line-height:2;max-width:260px}
+
+/* ── CODE VIEWER ── */
+.code-wrap {
+  background: #0d1117;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #30363d;
+}
+.code-tabs {
+  display: flex; gap: 2px;
+  background: #161b22;
+  padding: 8px 16px 0;
+  border-bottom: 1px solid #30363d;
+}
+.code-tab {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: #8b949e; padding: 6px 14px;
+  border-radius: 6px 6px 0 0; cursor: pointer;
+  border: 1px solid transparent; border-bottom: none;
+  background: transparent; transition: all 0.15s;
+}
+.code-tab.active {
+  background: #0d1117; color: #e6edf3;
+  border-color: #30363d; border-bottom-color: #0d1117;
+  margin-bottom: -1px;
+}
+.code-tab:hover:not(.active) { color: #c9d1d9; }
+.code-panel { display: none; }
+.code-panel.active { display: block; }
+.code-body { overflow-x: auto; padding: 20px 0; max-height: 460px; overflow-y: auto; }
+.code-body pre {
+  margin: 0; padding: 0 20px;
+  font-family: 'DM Mono', monospace; font-size: 11.5px;
+  line-height: 1.85; color: #e6edf3; white-space: pre;
+}
+.code-body pre .ln {
+  display: inline-block; width: 28px; text-align: right;
+  margin-right: 16px; color: #3d444d; user-select: none; font-size: 10px;
+}
+.kw { color: #ff7b72; } .ty { color: #ffa657; } .fn { color: #d2a8ff; }
+.st { color: #a5d6ff; } .cm { color: #8b949e; font-style: italic; }
+.nm { color: #79c0ff; } .pp { color: #f8c84f; }
+
+.game-frame {
+  border: 2px solid #b0cef5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.game-titlebar {
+  background: #1e3a5f;
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: #7aa3cc;
+}
+.titlebar-dot { width: 12px; height: 12px; border-radius: 50%; }
+.titlebar-dot.red    { background: #ff5f57; }
+.titlebar-dot.yellow { background: #ffbd2e; }
+.titlebar-dot.green  { background: #28c840; }
+.titlebar-name { margin-left: 8px; color: #7aa3cc; }
+
+/* Code viewer */
+.code-wrap {
+  background: #0d1117;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.code-tabs {
+  display: flex;
+  gap: 2px;
+  background: #161b22;
+  padding: 8px 16px 0;
+  border-bottom: 1px solid #30363d;
+}
+.code-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #8b949e;
+  padding: 6px 14px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  transition: all 0.15s;
+}
+.code-tab.active {
+  background: #0d1117;
+  color: #e6edf3;
+  border-color: #30363d;
+  border-bottom-color: #0d1117;
+  margin-bottom: -1px;
+}
+.code-tab:hover:not(.active) { color: #c9d1d9; }
+
+.code-panel { display: none; }
+.code-panel.active { display: block; }
+
+.code-body {
+  overflow-x: auto;
+  padding: 24px 0;
+}
+.code-body pre {
+  margin: 0;
+  padding: 0 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: #e6edf3;
+  white-space: pre;
+  counter-reset: line;
+}
+.code-body pre .ln {
+  display: inline-block;
+  width: 32px;
+  text-align: right;
+  margin-right: 20px;
+  color: #3d444d;
+  user-select: none;
+  font-size: 11px;
+}
+/* syntax colours */
+.kw  { color: #ff7b72; }   /* keywords */
+.ty  { color: #ffa657; }   /* types */
+.fn  { color: #d2a8ff; }   /* functions */
+.st  { color: #a5d6ff; }   /* strings */
+.cm  { color: #8b949e; font-style: italic; } /* comments */
+.nm  { color: #79c0ff; }   /* numbers / literals */
+.pp  { color: #f8c84f; }   /* preprocessor */
+
+.viva-strip {
+  background: #161b22;
+  border-top: 1px solid #30363d;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.viva-q {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.viva-q-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.viva-q-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: #c9d1d9;
+  line-height: 1.6;
+}
+
+/* ── UML SECTION ── */
+.uml-section { background: #fff; }
+.uml-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+.uml-card {
+  background: var(--card-bg);
+  border: 1.5px solid #c8daf5;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(74,158,255,0.07);
+}
+.uml-card-header {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.uml-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.05em; }
+.uml-card-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  background: var(--accent); color: #fff;
+  padding: 3px 10px; border-radius: 4px; letter-spacing: 0.1em;
+}
+.uml-card-body { padding: 20px; overflow-x: auto; }
+
+/* ── LLT CRITERIA SECTIONS ── */
+.llt-band {
+  background: #1e3a5f;
+  color: #cce4ff;
+  padding: 10px 48px;
+  display: flex; align-items: center; gap: 16px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.llt-badge {
+  background: var(--accent); color: #fff;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 10px; letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.llt-mark {
+  margin-left: auto;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* OOP SECTION */
+.oop-section { background: #f8fbff; }
+.oop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.oop-card {
+  background: #fff;
+  border: 1.5px solid #c8daf5;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(74,158,255,0.07);
+}
+.oop-card-head {
+  background: linear-gradient(135deg, #1e3a5f 0%, #1a6bdd 100%);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.oop-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.oop-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 0.04em; color: #fff;
+}
+.oop-card-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #7dd3fc; margin-top: 1px; }
+.oop-card-body { padding: 16px 18px; }
+.oop-code {
+  background: #0d1117;
+  border-radius: 8px; padding: 12px 14px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: #e6edf3; line-height: 1.8; overflow-x: auto;
+  white-space: pre;
+  margin-bottom: 10px;
+}
+.oop-desc {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: #4a6fa5; line-height: 1.75;
+}
+
+/* DEMO SECTION */
+.demo-section { background: #fff; }
+.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 8px; }
+.demo-step {
+  border: 1.5px solid #c8daf5; border-radius: 12px;
+  padding: 20px 18px;
+  background: #f0f6ff;
+  position: relative;
+}
+.demo-step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px; line-height: 1; color: var(--accent-light);
+  position: absolute; top: 12px; right: 16px;
+}
+.demo-step-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; color: var(--black);
+  letter-spacing: 0.03em; margin-bottom: 8px;
+}
+.demo-step-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: #4a6fa5; line-height: 1.75;
+}
+.demo-step-chip {
+  display: inline-block; margin-top: 10px;
+  padding: 3px 10px; border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  background: var(--accent); color: #fff;
+}
+
+/* DOC SECTION */
+.doc-section { background: #f0f6ff; }
+.doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media(max-width:700px){ .doc-grid { grid-template-columns: 1fr; } }
+.doc-card {
+  background: #fff;
+  border: 1.5px solid #c8daf5;
+  border-radius: 12px; padding: 22px 24px;
+  box-shadow: 0 2px 12px rgba(74,158,255,0.06);
+}
+.doc-card-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--accent); letter-spacing: 0.15em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.doc-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px; color: var(--black); letter-spacing: 0.03em;
+  margin-bottom: 12px;
+}
+.doc-list {
+  list-style: none; padding: 0; margin: 0;
+}
+.doc-list li {
+  font-family: 'DM Mono', monospace; font-size: 11.5px;
+  color: #4a6fa5; padding: 7px 0;
+  border-bottom: 1px solid #e4eefa;
+  display: flex; align-items: flex-start; gap: 8px;
+  line-height: 1.6;
+}
+.doc-list li:last-child { border-bottom: none; }
+.doc-bullet { color: var(--accent); font-size: 14px; flex-shrink: 0; }
+
+.footer {
+  background: #1e3a5f;
+  color: #7aa3cc;
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  border-top: 3px solid var(--accent);
+}
+.footer-left { color: #cce4ff; }
+.footer-right { letter-spacing: 0.1em; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50%      { transform: translateY(-12px); }
+}
+
+.chip-a { top: 100px; right: 60px; animation: fadeUp 0.8s 0.5s ease both, float 4s 1.5s ease-in-out infinite; }
+.chip-b { top: 220px; right: 110px; animation: fadeUp 0.8s 0.7s ease both, float 4.5s 2s ease-in-out infinite; }
+.chip-c { bottom: 180px; right: 60px; animation: fadeUp 0.8s 0.9s ease both, float 5s 2.5s ease-in-out infinite; }
+.chip-d { bottom: 90px; left: 48px; animation: fadeUp 0.8s 1.1s ease both, float 4.2s 1.8s ease-in-out infinite; }
+
+.hero-line {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #0ea5e9 50%, #22d3ee 100%);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">ONE<span>·</span>BULLET</div>
+  <div class="nav-links">
+    <a href="#game">Game</a>
+    <a href="#uml">UML Diagrams</a>
+    <a href="#oop">OOP Design</a>
+    <a href="#about">About</a>
+  </div>
+  <div class="nav-dot"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-circles">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="hero-tag">OODP Project · One Bullet Game · 2025</div>
+
+  <h1 class="hero-title">
+    <span>ONE</span>
+    <span class="accent-word">BULLET.</span>
+    <span class="outline-word">DECIDE.</span>
+  </h1>
+
+  <div class="hero-sub-row">
+    <p class="hero-desc">
+      You have <strong>one bullet</strong>. Enemies appear one by one —
+      some dangerous, some harmless. <strong>Shoot or skip.</strong>
+      Every wrong call costs a life.
+    </p>
+    <a href="#game" class="hero-pill">PLAY NOW ↓</a>
+  </div>
+
+  <div class="chip chip-a">
+    <span class="chip-badge chip-blue">THREAT</span> Goomba detected
+  </div>
+  <div class="chip chip-b">
+    <span class="chip-badge chip-teal">SKIP</span> Yoshi is harmless
+  </div>
+  <div class="chip chip-c">
+    <span class="chip-badge chip-green">+10 PTS</span> Perfect shot!
+  </div>
+  <div class="chip chip-d">
+    ● 1 bullet &nbsp;/&nbsp; 5 enemies &nbsp;/&nbsp; 3 lives
+  </div>
+
+  <div class="hero-line"></div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="ticker-inner">
+    ONE BULLET &nbsp;·&nbsp; SHOOT OR SKIP &nbsp;·&nbsp; OODP PROJECT &nbsp;·&nbsp; UML DIAGRAMS &nbsp;·&nbsp; CLASS · SEQUENCE · USE CASE &nbsp;·&nbsp; ONE BULLET &nbsp;·&nbsp; SHOOT OR SKIP &nbsp;·&nbsp; OODP PROJECT &nbsp;·&nbsp; UML DIAGRAMS &nbsp;·&nbsp; CLASS · SEQUENCE · USE CASE &nbsp;·&nbsp;
+  </span>
+</div>
+
+<!-- ABOUT STRIP -->
+<div class="about-strip" id="about">
+  <div class="stat-block">
+    <div class="stat-num">01</div>
+    <div class="stat-label">Bullet to use wisely</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num">05</div>
+    <div class="stat-label">Enemies per round</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-num">03</div>
+    <div class="stat-label">UML diagrams included</div>
+  </div>
+</div>
+
+<!-- GAME + CODE SIDE BY SIDE -->
+<section class="section game-section" id="game">
+  <div class="section-label">// playable demo &amp; c++ source</div>
+  <h2 class="section-heading">THE GAME</h2>
+
+  <div class="game-and-code">
+
+    <!-- LEFT: Playable Game -->
+    <div class="game-frame">
+      <div class="game-titlebar">
+        <div class="titlebar-dot red"></div>
+        <div class="titlebar-dot yellow"></div>
+        <div class="titlebar-dot green"></div>
+        <span class="titlebar-name">one-bullet.exe — Mario Edition</span>
+      </div>
+      <div class="game-wrap" id="gapp">
+        <div class="g-clouds">
+          <div style="position:absolute;width:72px;height:20px;top:12px;left:36px;background:#fff;border-radius:40px;opacity:.9"></div>
+          <div style="position:absolute;width:54px;height:16px;top:8px;left:200px;background:#fff;border-radius:40px;opacity:.9"></div>
+          <div style="position:absolute;width:80px;height:22px;top:16px;right:120px;background:#fff;border-radius:40px;opacity:.9"></div>
+          <div style="position:absolute;width:48px;height:15px;top:7px;right:40px;background:#fff;border-radius:40px;opacity:.9"></div>
+        </div>
+        <div class="g-ground"></div>
+        <div class="g-hud">
+          <div><div class="g-hud-label">SCORE</div><div class="g-hud-val" id="g-score">000</div></div>
+          <div><div class="g-hud-label">BULLET</div><div class="g-hud-val" id="g-bullet">🔵</div></div>
+          <div><div class="g-hud-label">WAVE</div><div class="g-hud-val" id="g-wave">1/5</div></div>
+          <div><div class="g-hud-label">LIVES</div><div class="g-hud-val" id="g-lives">❤️❤️❤️</div></div>
+        </div>
+        <div class="g-pips" id="g-pips"></div>
+        <div class="g-stage" id="g-stage">
+          <div style="font-size:9px;color:#003080;text-align:center;line-height:2.2">Press START to play!</div>
+        </div>
+        <div class="g-actions" id="g-actions">
+          <button class="gbtn gbtn-start" onclick="gStart()">▶ START</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: C++ Code Viewer -->
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showTab('t1',this)">classes &amp; inheritance</button>
+        <button class="code-tab" onclick="showTab('t2',this)">encapsulation</button>
+        <button class="code-tab" onclick="showTab('t3',this)">main() &amp; polymorphism</button>
+      </div>
+
+      <!-- Tab 1 -->
+      <div class="code-panel active" id="t1">
+        <div class="code-body"><pre>
+<span class="ln"> 1</span><span class="pp">#include &lt;iostream&gt;</span>
+<span class="ln"> 2</span><span class="pp">#include &lt;string&gt;</span>
+<span class="ln"> 3</span><span class="kw">using namespace</span> std;
+<span class="ln"> 4</span>
+<span class="ln"> 5</span><span class="cm">// ABSTRACTION — Enemy is abstract. It defines what every enemy</span>
+<span class="ln"> 6</span><span class="cm">// must do (isThreat, getType) but leaves the HOW to subclasses.</span>
+<span class="ln"> 7</span><span class="cm">// You can never do: new Enemy() — it won't compile.</span>
+<span class="ln"> 8</span><span class="kw">class</span> <span class="ty">Enemy</span> {
+<span class="ln"> 9</span><span class="kw">protected</span>:
+<span class="ln">10</span>    <span class="ty">string</span> name;   <span class="cm">// subclasses can read this directly</span>
+<span class="ln">11</span>    <span class="ty">string</span> hint;   <span class="cm">// shown to the player as a clue</span>
+<span class="ln">12</span><span class="kw">public</span>:
+<span class="ln">13</span>    <span class="fn">Enemy</span>(<span class="ty">string</span> n, <span class="ty">string</span> h) : name(n), hint(h) {}
+<span class="ln">14</span>
+<span class="ln">15</span>    <span class="ty">string</span> <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+<span class="ln">16</span>    <span class="ty">string</span> <span class="fn">getHint</span>() { <span class="kw">return</span> hint; }
+<span class="ln">17</span>
+<span class="ln">18</span>    <span class="cm">// pure virtual = every subclass MUST override these.</span>
+<span class="ln">19</span>    <span class="cm">// This is what makes Enemy an abstract class.</span>
+<span class="ln">20</span>    <span class="kw">virtual</span> <span class="ty">bool</span>   <span class="fn">isThreat</span>() = <span class="nm">0</span>;
+<span class="ln">21</span>    <span class="kw">virtual</span> <span class="ty">string</span> <span class="fn">getType</span>()  = <span class="nm">0</span>;
+<span class="ln">22</span>    <span class="kw">virtual</span> ~<span class="fn">Enemy</span>() {}   <span class="cm">// always virtual when using pointers</span>
+<span class="ln">23</span>};
+<span class="ln">24</span>
+<span class="ln">25</span><span class="cm">// INHERITANCE — DangerousEnemy gets everything Enemy has,</span>
+<span class="ln">26</span><span class="cm">// then fills in isThreat() and getType() its own way.</span>
+<span class="ln">27</span><span class="kw">class</span> <span class="ty">DangerousEnemy</span> : <span class="kw">public</span> <span class="ty">Enemy</span> {
+<span class="ln">28</span><span class="kw">public</span>:
+<span class="ln">29</span>    <span class="fn">DangerousEnemy</span>(<span class="ty">string</span> n, <span class="ty">string</span> h)
+<span class="ln">30</span>        : <span class="fn">Enemy</span>(n, h) {}   <span class="cm">// pass name + hint up to base</span>
+<span class="ln">31</span>
+<span class="ln">32</span>    <span class="ty">bool</span>   <span class="fn">isThreat</span>() <span class="kw">override</span> { <span class="kw">return</span> <span class="nm">true</span>;        }
+<span class="ln">33</span>    <span class="ty">string</span> <span class="fn">getType</span>()  <span class="kw">override</span> { <span class="kw">return</span> <span class="st">"DANGEROUS"</span>; }
+<span class="ln">34</span>};
+<span class="ln">35</span>
+<span class="ln">36</span><span class="cm">// INHERITANCE — HarmlessEnemy does the same, just returns false.</span>
+<span class="ln">37</span><span class="cm">// Same interface, different behaviour — that's polymorphism too.</span>
+<span class="ln">38</span><span class="kw">class</span> <span class="ty">HarmlessEnemy</span> : <span class="kw">public</span> <span class="ty">Enemy</span> {
+<span class="ln">39</span><span class="kw">public</span>:
+<span class="ln">40</span>    <span class="fn">HarmlessEnemy</span>(<span class="ty">string</span> n, <span class="ty">string</span> h)
+<span class="ln">41</span>        : <span class="fn">Enemy</span>(n, h) {}
+<span class="ln">42</span>
+<span class="ln">43</span>    <span class="ty">bool</span>   <span class="fn">isThreat</span>() <span class="kw">override</span> { <span class="kw">return</span> <span class="nm">false</span>;      }
+<span class="ln">44</span>    <span class="ty">string</span> <span class="fn">getType</span>()  <span class="kw">override</span> { <span class="kw">return</span> <span class="st">"HARMLESS"</span>; }
+<span class="ln">45</span>};
+</pre></div>
+      </div>
+
+      <!-- Tab 2 -->
+      <div class="code-panel" id="t2">
+        <div class="code-body"><pre>
+<span class="ln"> 1</span><span class="cm">// ENCAPSULATION — Player keeps its own state locked away.</span>
+<span class="ln"> 2</span><span class="cm">// Nothing outside this class can touch score or lives directly.</span>
+<span class="ln"> 3</span><span class="kw">class</span> <span class="ty">Player</span> {
+<span class="ln"> 4</span><span class="kw">private</span>:
+<span class="ln"> 5</span>    <span class="ty">int</span>  score;       <span class="cm">// nobody touches this from outside</span>
+<span class="ln"> 6</span>    <span class="ty">int</span>  lives;       <span class="cm">// same here — controlled via methods only</span>
+<span class="ln"> 7</span>    <span class="ty">bool</span> hasBullet;   <span class="cm">// resets each round</span>
+<span class="ln"> 8</span><span class="kw">public</span>:
+<span class="ln"> 9</span>    <span class="cm">// start fresh every game</span>
+<span class="ln">10</span>    <span class="fn">Player</span>() : score(<span class="nm">0</span>), lives(<span class="nm">3</span>), hasBullet(<span class="nm">true</span>) {}
+<span class="ln">11</span>
+<span class="ln">12</span>    <span class="cm">// read-only getters — we give access but not control</span>
+<span class="ln">13</span>    <span class="ty">int</span>  <span class="fn">getScore</span>()  { <span class="kw">return</span> score;     }
+<span class="ln">14</span>    <span class="ty">int</span>  <span class="fn">getLives</span>()  { <span class="kw">return</span> lives;     }
+<span class="ln">15</span>    <span class="ty">bool</span> <span class="fn">isAlive</span>()   { <span class="kw">return</span> lives &gt; <span class="nm">0</span>; }
+<span class="ln">16</span>
+<span class="ln">17</span>    <span class="cm">// POLYMORPHISM in action — Enemy* could be Dangerous or Harmless.</span>
+<span class="ln">18</span>    <span class="cm">// isThreat() resolves to the right subclass at runtime.</span>
+<span class="ln">19</span>    <span class="ty">void</span> <span class="fn">shoot</span>(<span class="ty">Enemy</span>* e) {
+<span class="ln">20</span>        hasBullet = <span class="nm">false</span>;
+<span class="ln">21</span>        <span class="kw">if</span> (e-&gt;<span class="fn">isThreat</span>()) {   <span class="cm">// virtual dispatch happens here</span>
+<span class="ln">22</span>            score += <span class="nm">10</span>;
+<span class="ln">23</span>            cout &lt;&lt; <span class="st">"Great shot! +10\n"</span>;
+<span class="ln">24</span>        } <span class="kw">else</span> {
+<span class="ln">25</span>            lives--;
+<span class="ln">26</span>            cout &lt;&lt; <span class="st">"Wrong call! -1 life\n"</span>;
+<span class="ln">27</span>        }
+<span class="ln">28</span>    }
+<span class="ln">29</span>
+<span class="ln">30</span>    <span class="ty">void</span> <span class="fn">skip</span>(<span class="ty">Enemy</span>* e) {
+<span class="ln">31</span>        <span class="kw">if</span> (!e-&gt;<span class="fn">isThreat</span>()) {  <span class="cm">// skipping a harmless one is smart</span>
+<span class="ln">32</span>            score += <span class="nm">5</span>;
+<span class="ln">33</span>            cout &lt;&lt; <span class="st">"Good call! +5\n"</span>;
+<span class="ln">34</span>        } <span class="kw">else</span> {
+<span class="ln">35</span>            lives--;
+<span class="ln">36</span>            cout &lt;&lt; <span class="st">"You got hit! -1 life\n"</span>;
+<span class="ln">37</span>        }
+<span class="ln">38</span>    }
+<span class="ln">39</span>
+<span class="ln">40</span>    <span class="ty">void</span> <span class="fn">resetBullet</span>() { hasBullet = <span class="nm">true</span>; }  <span class="cm">// one bullet per round</span>
+<span class="ln">41</span>
+<span class="ln">42</span>    <span class="cm">// rank based on final score — S is perfect, C means rough day</span>
+<span class="ln">43</span>    <span class="ty">string</span> <span class="fn">getRank</span>() {
+<span class="ln">44</span>        <span class="kw">if</span> (score &gt;= <span class="nm">40</span>) <span class="kw">return</span> <span class="st">"S RANK"</span>;
+<span class="ln">45</span>        <span class="kw">if</span> (score &gt;= <span class="nm">25</span>) <span class="kw">return</span> <span class="st">"A RANK"</span>;
+<span class="ln">46</span>        <span class="kw">if</span> (score &gt;= <span class="nm">15</span>) <span class="kw">return</span> <span class="st">"B RANK"</span>;
+<span class="ln">47</span>        <span class="kw">return</span>             <span class="st">"C RANK"</span>;
+<span class="ln">48</span>    }
+<span class="ln">49</span>};
+</pre></div>
+      </div>
+
+      <!-- Tab 3 -->
+      <div class="code-panel" id="t3">
+        <div class="code-body"><pre>
+<span class="ln"> 1</span><span class="ty">int</span> <span class="fn">main</span>() {
+<span class="ln"> 2</span>    <span class="cm">// create a fresh player — score 0, lives 3, bullet ready</span>
+<span class="ln"> 3</span>    <span class="ty">Player</span> player;
+<span class="ln"> 4</span>
+<span class="ln"> 5</span>    <span class="cm">// ABSTRACTION + POLYMORPHISM together:</span>
+<span class="ln"> 6</span>    <span class="cm">// We store base-class pointers. The array doesn't care whether</span>
+<span class="ln"> 7</span>    <span class="cm">// each slot holds Dangerous or Harmless — Enemy* covers both.</span>
+<span class="ln"> 8</span>    <span class="ty">Enemy</span>* enemies[<span class="nm">4</span>] = {
+<span class="ln"> 9</span>        <span class="kw">new</span> <span class="ty">DangerousEnemy</span>(<span class="st">"Goomba"</span>, <span class="st">"Shoot it!"</span>),
+<span class="ln">10</span>        <span class="kw">new</span> <span class="ty">HarmlessEnemy</span> (<span class="st">"Yoshi"</span>,  <span class="st">"Skip me!"</span>),
+<span class="ln">11</span>        <span class="kw">new</span> <span class="ty">DangerousEnemy</span>(<span class="st">"Koopa"</span>,  <span class="st">"Danger!"</span>),
+<span class="ln">12</span>        <span class="kw">new</span> <span class="ty">HarmlessEnemy</span> (<span class="st">"Toad"</span>,   <span class="st">"Ally!"</span>)
+<span class="ln">13</span>    };
+<span class="ln">14</span>
+<span class="ln">15</span>    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">4</span>; i++) {
+<span class="ln">16</span>        <span class="kw">if</span> (!player.<span class="fn">isAlive</span>()) <span class="kw">break</span>;  <span class="cm">// game over check</span>
+<span class="ln">17</span>
+<span class="ln">18</span>        <span class="cm">// these all come from the abstract Enemy interface</span>
+<span class="ln">19</span>        cout &lt;&lt; enemies[i]-&gt;<span class="fn">getName</span>() &lt;&lt; <span class="st">"\n"</span>;
+<span class="ln">20</span>        cout &lt;&lt; enemies[i]-&gt;<span class="fn">getType</span>() &lt;&lt; <span class="st">"\n"</span>;
+<span class="ln">21</span>        cout &lt;&lt; enemies[i]-&gt;<span class="fn">getHint</span>() &lt;&lt; <span class="st">"\n"</span>;
+<span class="ln">22</span>
+<span class="ln">23</span>        <span class="ty">char</span> ch;
+<span class="ln">24</span>        cin &gt;&gt; ch;   <span class="cm">// 's' to shoot, anything else to skip</span>
+<span class="ln">25</span>        <span class="kw">if</span> (ch == <span class="st">'s'</span>)
+<span class="ln">26</span>            player.<span class="fn">shoot</span>(enemies[i]);  <span class="cm">// runtime dispatch to right isThreat()</span>
+<span class="ln">27</span>        <span class="kw">else</span>
+<span class="ln">28</span>            player.<span class="fn">skip</span>(enemies[i]);   <span class="cm">// same here</span>
+<span class="ln">29</span>
+<span class="ln">30</span>        player.<span class="fn">resetBullet</span>();   <span class="cm">// bullet reloads each round</span>
+<span class="ln">31</span>    }
+<span class="ln">32</span>
+<span class="ln">33</span>    <span class="cm">// getters keep score and lives private but readable — encapsulation</span>
+<span class="ln">34</span>    cout &lt;&lt; player.<span class="fn">getRank</span>() &lt;&lt; <span class="st">" — "</span>
+<span class="ln">35</span>         &lt;&lt; player.<span class="fn">getScore</span>() &lt;&lt; <span class="st">" pts\n"</span>;
+<span class="ln">36</span>
+<span class="ln">37</span>    <span class="cm">// clean up — virtual destructor on Enemy handles this safely</span>
+<span class="ln">38</span>    <span class="kw">for</span> (<span class="ty">int</span> i = <span class="nm">0</span>; i &lt; <span class="nm">4</span>; i++) <span class="kw">delete</span> enemies[i];
+<span class="ln">39</span>    <span class="kw">return</span> <span class="nm">0</span>;
+<span class="ln">40</span>}
+</pre></div>
+      </div>
+    </div><!-- end code-wrap -->
+
+  </div><!-- end game-and-code -->
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CRITERION 2 — UML DIAGRAMS · 3 Marks
+     ══════════════════════════════════════════════ -->
+<div class="llt-band">
+  <span class="llt-badge">LLT–1 · CRITERION 2</span>
+  UML Diagrams — Class, Use Case, Sequence
+  <span class="llt-mark">3 / 10 Marks</span>
+</div>
+<!-- UML -->
+<section class="section uml-section" id="uml">
+  <div class="section-label">// object oriented design</div>
+  <h2 class="section-heading">UML<br>DIAGRAMS</h2>
+
+  <div class="uml-grid">
+
+    <!-- USE CASE -->
+    <div class="uml-card">
+      <div class="uml-card-header">
+        <span class="uml-card-title">Use Case Diagram</span>
+        <span class="uml-card-badge">ACTORS & INTERACTIONS</span>
+      </div>
+      <div class="uml-card-body">
+        <svg width="100%" viewBox="0 0 680 290" role="img" style="min-width:420px">
+          <title>Use case diagram</title>
+          <defs><marker id="ua" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+          <rect x="130" y="18" width="468" height="258" rx="8" fill="none" stroke-dasharray="6 4" stroke="#b0cef5" stroke-width="1.5"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="364" y="36" text-anchor="middle" fill="#4a6fa5">One Bullet — game system</text>
+          <circle cx="56" cy="74" r="13" fill="none" stroke="#1a6bdd" stroke-width="1.5"/>
+          <line x1="56" y1="87" x2="56" y2="128" stroke="#1a6bdd" stroke-width="1.5"/>
+          <line x1="56" y1="102" x2="36" y2="116" stroke="#1a6bdd" stroke-width="1.5"/>
+          <line x1="56" y1="102" x2="76" y2="116" stroke="#1a6bdd" stroke-width="1.5"/>
+          <line x1="56" y1="128" x2="38" y2="148" stroke="#1a6bdd" stroke-width="1.5"/>
+          <line x1="56" y1="128" x2="74" y2="148" stroke="#1a6bdd" stroke-width="1.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="56" y="166" text-anchor="middle" fill="#1a2233">Player</text>
+          <ellipse cx="300" cy="62" rx="82" ry="21" fill="#dbeafe" stroke="#1a6bdd" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="300" y="66" text-anchor="middle" fill="#1e3a5f">Start game</text>
+          <ellipse cx="300" cy="118" rx="82" ry="21" fill="#dbeafe" stroke="#1a6bdd" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="300" y="122" text-anchor="middle" fill="#1e3a5f">View enemy</text>
+          <ellipse cx="490" cy="94" rx="76" ry="21" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="490" y="98" text-anchor="middle" fill="#0c4a6e">Shoot</text>
+          <ellipse cx="490" cy="150" rx="76" ry="21" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="490" y="154" text-anchor="middle" fill="#14532d">Skip</text>
+          <ellipse cx="300" cy="190" rx="82" ry="21" fill="#dbeafe" stroke="#1a6bdd" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="300" y="194" text-anchor="middle" fill="#1e3a5f">Check result</text>
+          <ellipse cx="300" cy="250" rx="82" ry="21" fill="#dbeafe" stroke="#1a6bdd" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="300" y="254" text-anchor="middle" fill="#1e3a5f">End game</text>
+          <line x1="69" y1="94" x2="215" y2="66" stroke="#b0cef5" stroke-width="1" marker-end="url(#ua)"/>
+          <line x1="72" y1="112" x2="215" y2="118" stroke="#b0cef5" stroke-width="1" marker-end="url(#ua)"/>
+          <line x1="70" y1="124" x2="215" y2="186" stroke="#b0cef5" stroke-width="1" marker-end="url(#ua)"/>
+          <line x1="68" y1="136" x2="215" y2="247" stroke="#b0cef5" stroke-width="1" marker-end="url(#ua)"/>
+          <line x1="382" y1="111" x2="412" y2="98" stroke="#b0cef5" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ua)"/>
+          <line x1="382" y1="125" x2="412" y2="142" stroke="#b0cef5" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ua)"/>
+          <text font-family="DM Mono,monospace" font-size="10" x="400" y="109" fill="#4a9eff">«extend»</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="400" y="140" fill="#4a9eff">«extend»</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- CLASS DIAGRAM -->
+    <div class="uml-card">
+      <div class="uml-card-header">
+        <span class="uml-card-title">Class Diagram</span>
+        <span class="uml-card-badge">STRUCTURE & RELATIONSHIPS</span>
+      </div>
+      <div class="uml-card-body">
+        <svg width="100%" viewBox="0 0 680 400" role="img" style="min-width:500px">
+          <title>Class diagram</title>
+          <defs>
+            <marker id="ca" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+            <marker id="ci" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M1 1L10 6L1 11Z" fill="white" stroke="#1a6bdd" stroke-width="1"/></marker>
+          </defs>
+          <!-- Game -->
+          <rect x="40" y="28" width="168" height="130" rx="6" fill="#dbeafe" stroke="#1a6bdd" stroke-width="1"/>
+          <rect x="40" y="28" width="168" height="28" rx="6" fill="#1a6bdd"/>
+          <rect x="40" y="44" width="168" height="12" fill="#1a6bdd"/>
+          <line x1="40" y1="56" x2="208" y2="56" stroke="#1a6bdd" stroke-width="0.5"/>
+          <line x1="40" y1="96" x2="208" y2="96" stroke="#85b7eb" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="124" y="42" text-anchor="middle" fill="white">Game</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="52" y="72" fill="#1a3a6a">- score: int</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="52" y="87" fill="#1a3a6a">- wave: int</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="52" y="110" fill="#0c447c">+ start()</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="52" y="124" fill="#0c447c">+ nextEnemy()</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="52" y="138" fill="#0c447c">+ end()</text>
+          <!-- Player -->
+          <rect x="256" y="28" width="168" height="130" rx="6" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1"/>
+          <rect x="256" y="28" width="168" height="28" rx="6" fill="#0ea5e9"/>
+          <rect x="256" y="44" width="168" height="12" fill="#0ea5e9"/>
+          <line x1="256" y1="56" x2="424" y2="56" stroke="#0ea5e9" stroke-width="0.5"/>
+          <line x1="256" y1="96" x2="424" y2="96" stroke="#7dd3fc" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="340" y="42" text-anchor="middle" fill="white">Player</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="72" fill="#0c4a6e">- hasBullet: bool</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="87" fill="#0c4a6e">- lives: int</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="110" fill="#075985">+ shoot()</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="124" fill="#075985">+ skip()</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="138" fill="#075985">+ hasLives(): bool</text>
+          <!-- ResultSystem -->
+          <rect x="472" y="28" width="172" height="116" rx="6" fill="#faeeda" stroke="#854F0B" stroke-width="1"/>
+          <rect x="472" y="28" width="172" height="28" rx="6" fill="#854F0B"/>
+          <rect x="472" y="44" width="172" height="12" fill="#854F0B"/>
+          <line x1="472" y1="56" x2="644" y2="56" stroke="#854F0B" stroke-width="0.5"/>
+          <line x1="472" y1="84" x2="644" y2="84" stroke="#EF9F27" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="558" y="42" text-anchor="middle" fill="white">ResultSystem</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="484" y="72" fill="#633806">- lastResult: str</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="484" y="98" fill="#633806">+ evaluate(a,e)</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="484" y="112" fill="#633806">+ getScore(): int</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="484" y="126" fill="#633806">+ display()</text>
+          <!-- Enemy -->
+          <rect x="256" y="218" width="168" height="116" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+          <rect x="256" y="218" width="168" height="28" rx="6" fill="#16a34a"/>
+          <rect x="256" y="234" width="168" height="12" fill="#16a34a"/>
+          <line x1="256" y1="246" x2="424" y2="246" stroke="#22c55e" stroke-width="0.5"/>
+          <line x1="256" y1="274" x2="424" y2="274" stroke="#86efac" stroke-width="0.5"/>
+          <text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="340" y="232" text-anchor="middle" fill="white">Enemy</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="262" fill="#14532d">- name: string</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="288" fill="#166534">+ isThreat(): bool</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="302" fill="#166534">+ getSprite(): str</text>
+          <text font-family="DM Mono,monospace" font-size="11" x="268" y="316" fill="#166534">+ describe(): str</text>
+          <!-- DangerousEnemy -->
+          <rect x="60" y="356" width="168" height="30" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="12" font-weight="500" x="144" y="371" text-anchor="middle" fill="#7f1d1d">DangerousEnemy</text>
+          <!-- HarmlessEnemy -->
+          <rect x="452" y="356" width="152" height="30" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+          <text font-family="DM Sans,sans-serif" font-size="12" font-weight="500" x="528" y="371" text-anchor="middle" fill="#14532d">HarmlessEnemy</text>
+          <!-- arrows -->
+          <line x1="208" y1="68" x2="254" y2="68" stroke="#b0cef5" stroke-width="0.5" marker-end="url(#ca)"/>
+          <text font-family="DM Mono,monospace" font-size="10" x="231" y="62" text-anchor="middle" fill="#b0cef5">1  1</text>
+          <line x1="124" y1="158" x2="124" y2="258" stroke="#b0cef5" stroke-width="0.5"/>
+          <line x1="124" y1="258" x2="254" y2="258" stroke="#b0cef5" stroke-width="0.5" marker-end="url(#ca)"/>
+          <text font-family="DM Mono,monospace" font-size="10" x="194" y="252" text-anchor="middle" fill="#b0cef5">1..N</text>
+          <line x1="424" y1="82" x2="470" y2="82" stroke="#b0cef5" stroke-width="0.5" marker-end="url(#ca)"/>
+          <line x1="306" y1="334" x2="144" y2="354" stroke="#1a6bdd" stroke-width="0.5" marker-end="url(#ci)"/>
+          <line x1="374" y1="334" x2="528" y2="354" stroke="#1a6bdd" stroke-width="0.5" marker-end="url(#ci)"/>
+          <!-- legend -->
+          <line x1="42" y1="378" x2="58" y2="378" stroke="#b0cef5" stroke-width="0.5" marker-end="url(#ca)"/>
+          <text font-family="DM Mono,monospace" font-size="10" x="62" y="382" fill="#6b7fa3">association</text>
+          <line x1="42" y1="394" x2="58" y2="394" stroke="#1a6bdd" stroke-width="0.5" marker-end="url(#ci)"/>
+          <text font-family="DM Mono,monospace" font-size="10" x="62" y="398" fill="#6b7fa3">inheritance</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- SEQUENCE DIAGRAM -->
+    <div class="uml-card">
+      <div class="uml-card-header">
+        <span class="uml-card-title">Sequence Diagram</span>
+        <span class="uml-card-badge">SHOOT SCENARIO</span>
+      </div>
+      <div class="uml-card-body">
+        <svg width="100%" viewBox="0 0 680 415" role="img" style="min-width:500px">
+          <title>Sequence diagram</title>
+          <defs><marker id="sa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+          <rect x="38" y="18" width="96" height="32" rx="4" fill="#0ea5e9"/><text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="86" y="34" text-anchor="middle" dominant-baseline="central" fill="white">Player</text>
+          <rect x="204" y="18" width="96" height="32" rx="4" fill="#1a6bdd"/><text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="252" y="34" text-anchor="middle" dominant-baseline="central" fill="white">Game</text>
+          <rect x="386" y="18" width="96" height="32" rx="4" fill="#16a34a"/><text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="434" y="34" text-anchor="middle" dominant-baseline="central" fill="white">Enemy</text>
+          <rect x="548" y="18" width="108" height="32" rx="4" fill="#854F0B"/><text font-family="DM Sans,sans-serif" font-size="13" font-weight="500" x="602" y="34" text-anchor="middle" dominant-baseline="central" fill="white">ResultSystem</text>
+          <line x1="86" y1="50" x2="86" y2="410" stroke="#c8daf5" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="252" y1="50" x2="252" y2="410" stroke="#c8daf5" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="434" y1="50" x2="434" y2="410" stroke="#c8daf5" stroke-width="1" stroke-dasharray="5 4"/>
+          <line x1="602" y1="50" x2="602" y2="410" stroke="#c8daf5" stroke-width="1" stroke-dasharray="5 4"/>
+          <rect x="82" y="86" width="8" height="300" rx="2" fill="#b0cef5"/>
+          <rect x="248" y="86" width="8" height="300" rx="2" fill="#b0cef5"/>
+          <rect x="430" y="126" width="8" height="80" rx="2" fill="#b0cef5"/>
+          <rect x="598" y="226" width="8" height="100" rx="2" fill="#b0cef5"/>
+          <line x1="90" y1="96" x2="246" y2="96" stroke="#1a6bdd" stroke-width="1" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="168" y="91" text-anchor="middle" fill="#1a2233">startGame()</text>
+          <line x1="246" y1="136" x2="90" y2="136" stroke="#1a6bdd" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="168" y="131" text-anchor="middle" fill="#1a2233">showEnemy(enemy)</text>
+          <line x1="256" y1="166" x2="428" y2="166" stroke="#16a34a" stroke-width="1" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="342" y="161" text-anchor="middle" fill="#1a2233">isThreat()</text>
+          <line x1="428" y1="196" x2="256" y2="196" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="342" y="191" text-anchor="middle" fill="#6b7fa3">return true</text>
+          <line x1="90" y1="236" x2="246" y2="236" stroke="#1a6bdd" stroke-width="1" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="168" y="231" text-anchor="middle" fill="#1a2233">shoot()</text>
+          <line x1="256" y1="266" x2="596" y2="266" stroke="#854F0B" stroke-width="1" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="426" y="261" text-anchor="middle" fill="#1a2233">evaluate("shoot", enemy)</text>
+          <line x1="596" y1="306" x2="256" y2="306" stroke="#854F0B" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="426" y="301" text-anchor="middle" fill="#6b7fa3">return +10, "win"</text>
+          <line x1="246" y1="346" x2="90" y2="346" stroke="#1a6bdd" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#sa)"/>
+          <text font-family="DM Mono,monospace" font-size="11" x="168" y="341" text-anchor="middle" fill="#1a2233">displayOutcome("win")</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="99" fill="#b0cef5">1</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="139" fill="#b0cef5">2</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="169" fill="#b0cef5">3</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="199" fill="#b0cef5">4</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="239" fill="#b0cef5">5</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="269" fill="#b0cef5">6</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="309" fill="#b0cef5">7</text>
+          <text font-family="DM Mono,monospace" font-size="10" x="26" y="349" fill="#b0cef5">8</text>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CRITERION 1 — APPLICATION DESIGN (OOP) · 3 Marks
+     ══════════════════════════════════════════════ -->
+<div class="llt-band">
+  <span class="llt-badge">LLT–1 · CRITERION 1</span>
+  Application Design — OOP Principles
+  <span class="llt-mark">3 / 10 Marks</span>
+</div>
+<section class="section oop-section" id="oop">
+  <div class="section-label">// object-oriented design</div>
+  <h2 class="section-heading">OOP PRINCIPLES</h2>
+
+  <div class="oop-grid">
+
+    <div class="oop-card">
+      <div class="oop-card-head">
+        <div class="oop-icon">📦</div>
+        <div>
+          <div class="oop-card-title">Classes & Objects</div>
+          <div class="oop-card-sub">Encapsulation of data + behaviour</div>
+        </div>
+      </div>
+      <div class="oop-card-body">
+        <div class="oop-code"><span class="kw">struct</span> <span class="ty">Enemy</span> {
+  string name;
+  <span class="kw">bool</span>   isThreat;
+  string sprite;
+  string describe();
+};</div>
+        <div class="oop-desc">Game entities (Enemy, Player, ResultSystem) are modelled as independent classes with private state and public interfaces — a core OOP pattern.</div>
+      </div>
+    </div>
+
+    <div class="oop-card">
+      <div class="oop-card-head">
+        <div class="oop-icon">🔒</div>
+        <div>
+          <div class="oop-card-title">Encapsulation</div>
+          <div class="oop-card-sub">Private data, public methods</div>
+        </div>
+      </div>
+      <div class="oop-card-body">
+        <div class="oop-code"><span class="kw">class</span> <span class="ty">Player</span> {
+  <span class="kw">private</span>:
+    <span class="kw">bool</span> hasBullet;
+    <span class="kw">int</span>  lives;
+  <span class="kw">public</span>:
+    <span class="kw">void</span> <span class="fn">shoot</span>();
+    <span class="kw">void</span> <span class="fn">skip</span>();
+};</div>
+        <div class="oop-desc">Player state is hidden behind a public interface — the game logic never touches <code>hasBullet</code> directly, enforcing encapsulation.</div>
+      </div>
+    </div>
+
+    <div class="oop-card">
+      <div class="oop-card-head">
+        <div class="oop-icon">🧬</div>
+        <div>
+          <div class="oop-card-title">Inheritance</div>
+          <div class="oop-card-sub">DangerousEnemy / HarmlessEnemy</div>
+        </div>
+      </div>
+      <div class="oop-card-body">
+        <div class="oop-code"><span class="kw">class</span> <span class="ty">DangerousEnemy</span>
+  : <span class="kw">public</span> <span class="ty">Enemy</span> { ... };
+
+<span class="kw">class</span> <span class="ty">HarmlessEnemy</span>
+  : <span class="kw">public</span> <span class="ty">Enemy</span> { ... };</div>
+        <div class="oop-desc">Enemy subtypes inherit base behaviour and override <code>isThreat()</code> — illustrating single-level inheritance with meaningful specialisation.</div>
+      </div>
+    </div>
+
+    <div class="oop-card">
+      <div class="oop-card-head">
+        <div class="oop-icon">🎭</div>
+        <div>
+          <div class="oop-card-title">Polymorphism</div>
+          <div class="oop-card-sub">Virtual method dispatch</div>
+        </div>
+      </div>
+      <div class="oop-card-body">
+        <div class="oop-code"><span class="kw">virtual bool</span> <span class="fn">isThreat</span>() = <span class="nm">0</span>;
+
+<span class="cm">// resolved at runtime:</span>
+Enemy* e = <span class="kw">new</span> DangerousEnemy();
+e-><span class="fn">isThreat</span>(); <span class="cm">// → true</span></div>
+        <div class="oop-desc">A pure virtual <code>isThreat()</code> on the base class lets the Game loop treat all enemies uniformly while dispatching the correct behaviour at runtime.</div>
+      </div>
+    </div>
+
+    <div class="oop-card">
+      <div class="oop-card-head">
+        <div class="oop-icon">🎭</div>
+        <div>
+          <div class="oop-card-title">Abstraction</div>
+          <div class="oop-card-sub">Hide complexity, expose what matters</div>
+        </div>
+      </div>
+      <div class="oop-card-body">
+        <div class="oop-code"><span class="cm">// Enemy is abstract — can't be created directly</span>
+<span class="kw">class</span> <span class="ty">Enemy</span> {
+  <span class="kw">virtual bool</span> <span class="fn">isThreat</span>() = <span class="nm">0</span>; <span class="cm">// pure virtual</span>
+  <span class="kw">virtual</span> <span class="ty">string</span> <span class="fn">getType</span>() = <span class="nm">0</span>;
+};
+<span class="cm">// Enemy* e = new Enemy(); ← won't compile!</span></div>
+        <div class="oop-desc"><code>Enemy</code> is an abstract base class — it defines <em>what</em> every enemy must do (<code>isThreat</code>, <code>getType</code>) without specifying <em>how</em>. You can never create a raw Enemy; only its concrete subtypes can be instantiated.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CRITERION 3 — DEMONSTRATION · 2 Marks
+     ══════════════════════════════════════════════ -->
+<div class="llt-band">
+  <span class="llt-badge">LLT–1 · CRITERION 3</span>
+  Demonstration — Logical Application Flow
+  <span class="llt-mark">2 / 10 Marks</span>
+</div>
+<section class="section demo-section">
+  <div class="section-label">// working application flow</div>
+  <h2 class="section-heading">HOW IT WORKS</h2>
+
+  <div class="demo-grid">
+    <div class="demo-step">
+      <div class="demo-step-num">01</div>
+      <div class="demo-step-title">Game Starts</div>
+      <div class="demo-step-desc">Player object is initialised with 3 lives and a bullet. 5 enemies are selected at random from the enemy pool and shuffled.</div>
+      <span class="demo-step-chip">gStart()</span>
+    </div>
+    <div class="demo-step">
+      <div class="demo-step-num">02</div>
+      <div class="demo-step-title">Enemy Appears</div>
+      <div class="demo-step-desc">The Game calls <code>nextEnemy()</code> — an Enemy object is fetched and its sprite + description are rendered to the stage.</div>
+      <span class="demo-step-chip">Enemy::describe()</span>
+    </div>
+    <div class="demo-step">
+      <div class="demo-step-num">03</div>
+      <div class="demo-step-title">Player Decides</div>
+      <div class="demo-step-desc">Player calls either <code>shoot()</code> or <code>skip()</code>. The decision is passed to ResultSystem with the current Enemy object.</div>
+      <span class="demo-step-chip">Player::shoot() / skip()</span>
+    </div>
+    <div class="demo-step">
+      <div class="demo-step-num">04</div>
+      <div class="demo-step-title">Result Evaluated</div>
+      <div class="demo-step-desc">ResultSystem::evaluate() checks <code>isThreat()</code> against the action. Score is updated (+10 correct shoot, +5 correct skip) or a life is lost.</div>
+      <span class="demo-step-chip">ResultSystem::evaluate()</span>
+    </div>
+    <div class="demo-step">
+      <div class="demo-step-num">05</div>
+      <div class="demo-step-title">Outcome Shown</div>
+      <div class="demo-step-desc">Win/Lose feedback is displayed. If lives reach 0 or all 5 waves clear, the game ends and a rank (S/A/B/C) is awarded.</div>
+      <span class="demo-step-chip">ResultSystem::display()</span>
+    </div>
+    <div class="demo-step">
+      <div class="demo-step-num">06</div>
+      <div class="demo-step-title">Play Again</div>
+      <div class="demo-step-desc">Player can restart — all objects are re-initialised from scratch, demonstrating proper object lifecycle management.</div>
+      <span class="demo-step-chip">Re-init all objects</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CRITERION 4 — PRESENTATION & DOCUMENTATION · 2 Marks
+     ══════════════════════════════════════════════ -->
+<div class="llt-band">
+  <span class="llt-badge">LLT–1 · CRITERION 4</span>
+  Presentation &amp; Documentation
+  <span class="llt-mark">2 / 10 Marks</span>
+</div>
+<section class="section doc-section">
+  <div class="section-label">// project documentation</div>
+  <h2 class="section-heading">DOCUMENTATION</h2>
+
+  <div class="doc-grid">
+
+    <div class="doc-card">
+      <div class="doc-card-label">Project Overview</div>
+      <div class="doc-card-title">What is One Bullet?</div>
+      <ul class="doc-list">
+        <li><span class="doc-bullet">▸</span> A decision-making game where the player has exactly one bullet per round to use — or not.</li>
+        <li><span class="doc-bullet">▸</span> Enemies appear one at a time. The player must identify if the enemy is a threat and react correctly.</li>
+        <li><span class="doc-bullet">▸</span> Built in C++ for console, with a full HTML5 interactive demo for presentation.</li>
+        <li><span class="doc-bullet">▸</span> Designed to demonstrate OOP concepts from the OODP course in a fun, tangible format.</li>
+      </ul>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-card-label">Design Decisions</div>
+      <div class="doc-card-title">Architecture Notes</div>
+      <ul class="doc-list">
+        <li><span class="doc-bullet">▸</span> <strong>Struct vs Class:</strong> Enemy uses a struct for lightweight data grouping; Player and ResultSystem use classes with access control.</li>
+        <li><span class="doc-bullet">▸</span> <strong>Inheritance:</strong> DangerousEnemy and HarmlessEnemy extend Enemy to illustrate polymorphic dispatch cleanly.</li>
+        <li><span class="doc-bullet">▸</span> <strong>ResultSystem:</strong> Separated from Game intentionally — single responsibility principle keeps evaluation logic isolated.</li>
+        <li><span class="doc-bullet">▸</span> <strong>Randomisation:</strong> <code>srand(time(0))</code> ensures a fresh enemy order each game, adding replayability.</li>
+      </ul>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-card-label">OOP Mapping</div>
+      <div class="doc-card-title">Concepts Covered</div>
+      <ul class="doc-list">
+        <li><span class="doc-bullet">▸</span> <strong>Classes & Objects</strong> — Game, Player, Enemy, ResultSystem</li>
+        <li><span class="doc-bullet">▸</span> <strong>Encapsulation</strong> — private members with public accessors in Player</li>
+        <li><span class="doc-bullet">▸</span> <strong>Inheritance</strong> — DangerousEnemy, HarmlessEnemy extend Enemy</li>
+        <li><span class="doc-bullet">▸</span> <strong>Polymorphism</strong> — virtual <code>isThreat()</code> overridden by subtypes</li>
+      </ul>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-card-label">UML Coverage</div>
+      <div class="doc-card-title">Diagrams Included</div>
+      <ul class="doc-list">
+        <li><span class="doc-bullet">▸</span> <strong>Use Case Diagram</strong> — Player interactions: Start, View Enemy, Shoot, Skip, Check Result, End Game</li>
+        <li><span class="doc-bullet">▸</span> <strong>Class Diagram</strong> — All 4 classes with attributes, methods, associations, and inheritance arrows</li>
+        <li><span class="doc-bullet">▸</span> <strong>Sequence Diagram</strong> — Full shoot-scenario message flow across Player → Game → Enemy → ResultSystem</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-left">ONE BULLET &nbsp;·&nbsp; OODP Project 2025</div>
+  <div class="footer-right">USE CASE &nbsp;·&nbsp; CLASS &nbsp;·&nbsp; SEQUENCE</div>
+</footer>
+
+<script>
+// ── Tab switcher ──
+function showTab(id, btn) {
+  document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.code-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Game logic ──
+const ENEMIES = [
+  { name:"Goomba",        sprite:"🍄", threat:true,  desc:"Dangerous! Walking mushroom.<br>Shoot before it reaches you!" },
+  { name:"Koopa",         sprite:"🐢", threat:true,  desc:"Dangerous! Turtle shell charge.<br>Take it out fast!" },
+  { name:"Boo",           sprite:"👻", threat:false, desc:"Harmless... only moves when<br>you look away. Save your bullet!" },
+  { name:"Star",          sprite:"⭐",  threat:false, desc:"Harmless! A power-up star.<br>Don't shoot it!" },
+  { name:"Piranha Plant", sprite:"🌿", threat:true,  desc:"Dangerous! Chomps everything.<br>Blast it now!" },
+  { name:"Lakitu",        sprite:"☁️",  threat:true,  desc:"Dangerous! Throws Spinies.<br>Shoot before it rains!" },
+  { name:"Toad",          sprite:"🧢", threat:false, desc:"Harmless! Your ally Toad.<br>Don't shoot your friend!" },
+  { name:"Yoshi",         sprite:"🦎", threat:false, desc:"Harmless! Yoshi's on your side.<br>Skip safely." },
+  { name:"Bullet Bill",   sprite:"💣", threat:true,  desc:"Dangerous! Homing missile.<br>Shoot it down NOW!" },
+  { name:"Chain Chomp",   sprite:"⛓️",  threat:true,  desc:"Dangerous! About to break free.<br>One shot, one kill!" },
+];
+
+let G = {};
+function shuffle(a){ return a.slice().sort(()=>Math.random()-.5); }
+
+function gStart(){
+  G = { enemies:shuffle(ENEMIES).slice(0,5), idx:0, score:0, hasBullet:true, lives:3, results:[], decided:false };
+  gRender();
+}
+function gRender(){ gHUD(); gPips(); gStage(); gActions(); }
+function gHUD(){
+  document.getElementById('g-score').textContent = String(G.score).padStart(3,'0');
+  document.getElementById('g-bullet').innerHTML = G.hasBullet ? '🔵' : '<span style="opacity:.3">🔵</span>';
+  document.getElementById('g-wave').textContent = (G.idx+1)+'/5';
+  const hearts = ['❤️','❤️','❤️'].slice(0, G.lives).join('') || '💀';
+  document.getElementById('g-lives').innerHTML = hearts;
+}
+function gPips(){
+  document.getElementById('g-pips').innerHTML = G.enemies.map((e,i)=>{
+    let c = 'g-pip';
+    if(i < G.idx) c += G.results[i] ? ' g' : ' b';
+    else if(i === G.idx) c += ' c';
+    return `<div class="${c}"></div>`;
+  }).join('');
+}
+function gStage(){
+  const e = G.enemies[G.idx];
+  document.getElementById('g-stage').innerHTML = `
+    <div class="g-esp" id="gesp">${e.sprite}</div>
+    <div class="g-ename">${e.name}</div>
+    <div class="g-edesc">${e.desc}</div>
+    <div id="gres"></div>`;
+}
+function gActions(){
+  const dis = G.decided ? 'disabled' : '';
+  document.getElementById('g-actions').innerHTML = `
+    <button class="gbtn gbtn-shoot" ${dis} onclick="gAct('shoot')">🔫 SHOOT</button>
+    <button class="gbtn gbtn-skip"  ${dis} onclick="gAct('skip')">⏭ SKIP</button>`;
+}
+function gAct(action){
+  if(G.decided) return;
+  G.decided = true;
+  const e = G.enemies[G.idx];
+  let out = '', ok = false;
+  if(action === 'shoot'){
+    G.hasBullet = false;
+    if(e.threat){ G.score += 10; ok = true; out = `<div class="g-res win">✅ NICE SHOT! +10pts<br>${e.name} defeated!</div>`; }
+    else { G.lives--; out = `<div class="g-res lose">❌ WRONG CALL!<br>You shot ${e.name}! -1 Life</div>`; gShake(); }
+  } else {
+    if(!e.threat){ G.score += 5; ok = true; out = `<div class="g-res skip">👍 GOOD CALL! +5pts<br>${e.name} is harmless!</div>`; }
+    else { G.lives--; out = `<div class="g-res lose">❌ GOT HIT!<br>${e.name} attacked! -1 Life</div>`; gShake(); }
+  }
+  G.results.push(ok);
+  document.getElementById('gres').innerHTML = out;
+  gHUD(); gPips();
+  const isLast = G.idx === G.enemies.length - 1;
+  const isDead = G.lives <= 0;
+  if(isDead || isLast){ setTimeout(()=> gEnd(!isDead), 900); return; }
+  document.getElementById('g-actions').innerHTML = `<button class="gbtn gbtn-next" onclick="gNext()">NEXT ▶</button>`;
+}
+function gNext(){ G.idx++; G.decided = false; G.hasBullet = true; gRender(); }
+function gShake(){
+  const el = document.getElementById('gesp');
+  if(!el) return;
+  el.style.animation = 'none'; void el.offsetWidth;
+  el.style.animation = 'gshake .4s ease';
+  setTimeout(()=>{ if(el) el.style.animation = 'gbounce .6s ease-in-out infinite alternate'; }, 400);
+}
+function gEnd(survived){
+  const grade = G.score>=40?'S RANK':G.score>=25?'A RANK':G.score>=15?'B RANK':'C RANK';
+  const title  = survived ? (G.score>=40 ? 'PERFECT!' : 'YOU WIN!') : 'GAME OVER';
+  const o = document.createElement('div');
+  o.className = 'g-ovl';
+  o.innerHTML = `
+    <div class="g-ovl-title">${title}</div>
+    <div class="g-ovl-score">${grade} — ${G.score} PTS</div>
+    <div class="g-ovl-sub">Correct: ${G.results.filter(Boolean).length}/5 · Lives left: ${G.lives}</div>
+    <button class="gbtn gbtn-start" onclick="this.parentElement.remove();gStart()">▶ PLAY AGAIN</button>`;
+  document.getElementById('gapp').appendChild(o);
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>
