@@ -1,0 +1,126 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// ======================= ABSTRACTION =======================
+class Enemy {
+protected:
+    string name;
+    string hint;
+
+public:
+    Enemy(string n, string h) : name(n), hint(h) {}
+
+    string getName() { return name; }
+    string getHint() { return hint; }
+
+    // Pure virtual functions → must be implemented
+    virtual bool   isThreat() = 0;
+    virtual string getType()  = 0;
+
+    virtual ~Enemy() {}
+};
+
+// ======================= INHERITANCE =======================
+class DangerousEnemy : public Enemy {
+public:
+    DangerousEnemy(string n, string h) : Enemy(n, h) {}
+
+    bool isThreat() override { return true; }
+    string getType() override { return "DANGEROUS"; }
+};
+
+class HarmlessEnemy : public Enemy {
+public:
+    HarmlessEnemy(string n, string h) : Enemy(n, h) {}
+
+    bool isThreat() override { return false; }
+    string getType() override { return "HARMLESS"; }
+};
+
+// ======================= ENCAPSULATION =======================
+class Player {
+private:
+    int score;
+    int lives;
+    bool hasBullet;
+
+public:
+    Player() : score(0), lives(3), hasBullet(true) {}
+
+    int getScore() { return score; }
+    int getLives() { return lives; }
+    bool isAlive() { return lives > 0; }
+
+    // ======================= POLYMORPHISM =======================
+    void shoot(Enemy* e) {
+        hasBullet = false;
+
+        if (e->isThreat()) {   // runtime polymorphism
+            score += 10;
+            cout << "Great shot! +10\n";
+        } else {
+            lives--;
+            cout << "Wrong call! -1 life\n";
+        }
+    }
+
+    void skip(Enemy* e) {
+        if (!e->isThreat()) {
+            score += 5;
+            cout << "Good call! +5\n";
+        } else {
+            lives--;
+            cout << "You got hit! -1 life\n";
+        }
+    }
+
+    void resetBullet() {
+        hasBullet = true;
+    }
+
+    string getRank() {
+        if (score >= 40) return "S RANK";
+        if (score >= 25) return "A RANK";
+        if (score >= 15) return "B RANK";
+        return "C RANK";
+    }
+};
+
+// ======================= MAIN =======================
+int main() {
+    Player player;
+
+    Enemy* enemies[4] = {
+        new DangerousEnemy("Goomba", "Shoot it!"),
+        new HarmlessEnemy("Yoshi", "Skip me!"),
+        new DangerousEnemy("Koopa", "Danger!"),
+        new HarmlessEnemy("Toad", "Ally!")
+    };
+
+    for (int i = 0; i < 4; i++) {
+        if (!player.isAlive()) break;
+
+        cout << "\nEnemy: " << enemies[i]->getName() << endl;
+        cout << "Type: " << enemies[i]->getType() << endl;
+        cout << "Hint: " << enemies[i]->getHint() << endl;
+
+        cout << "Shoot (s) or Skip (k): ";
+        char ch;
+        cin >> ch;
+
+        if (ch == 's')
+            player.shoot(enemies[i]);
+        else
+            player.skip(enemies[i]);
+
+        player.resetBullet();
+    }
+
+    cout << "\nFinal Result: " << player.getRank()
+         << " — " << player.getScore() << " pts\n";
+
+    
+
+    return 0;
+}
